@@ -20,6 +20,7 @@ import android.compat.annotation.UnsupportedAppUsage;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.os.AsyncResult;
+import android.os.HandlerThread;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;

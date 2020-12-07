@@ -303,6 +303,8 @@ public class DataConnection extends StateMachine {
     private final Map<ApnContext, ConnectionParams> mApnContexts = new ConcurrentHashMap<>();
     PendingIntent mReconnectIntent = null;
 
+    private boolean mRegistered = false;
+
 
     // ***** Event codes for driving the state machine, package visible for Dcc
     static final int BASE = Protocol.BASE_DATA_CONNECTION;
@@ -420,6 +422,7 @@ public class DataConnection extends StateMachine {
     }
 
     protected void dispose() {
+    private void dispose() {
         log("dispose: call quiteNow()");
         quitNow();
     }
@@ -449,6 +452,10 @@ public class DataConnection extends StateMachine {
 
     boolean hasBeenTransferred() {
         return mHandoverState == HANDOVER_STATE_COMPLETED;
+    }
+
+    boolean isBeingInTransferring() {
+        return mHandoverState == HANDOVER_STATE_BEING_TRANSFERRED;
     }
 
     int getCid() {
@@ -592,6 +599,19 @@ public class DataConnection extends StateMachine {
             lp.setMtu(mtu);
             if (DBG) log("MTU set by config resource to: " + mtu);
         }
+    }
+
+    private boolean isApnTypeDefault() {
+        final String[] types = ApnSetting.getApnTypesStringFromBitmask(
+            mApnSetting.getApnTypeBitmask()).split(",");
+        for (String type : types) {
+            if (type.equals(PhoneConstants.APN_TYPE_DEFAULT)) {
+                return true;
+            } else {
+                continue;
+            }
+        }
+        return false;
     }
 
     //***** Constructor (NOTE: uses dcc.getHandler() as its Handler)
@@ -1943,8 +1963,8 @@ public class DataConnection extends StateMachine {
                     return HANDLED;
                 case EVENT_CONNECT:
                     if (DBG) log("DcInactiveState: mag.what=EVENT_CONNECT");
-                    ConnectionParams cp = (ConnectionParams) msg.obj;
 
+                    ConnectionParams cp = (ConnectionParams) msg.obj;
                     if (!initConnection(cp)) {
                         log("DcInactiveState: msg.what=EVENT_CONNECT initConnection failed");
                         notifyConnectCompleted(cp, DataFailCause.UNACCEPTABLE_NETWORK_PARAMETER,
@@ -2032,6 +2052,10 @@ public class DataConnection extends StateMachine {
                     DataCallResponse dataCallResponse =
                             msg.getData().getParcelable(DataServiceManager.DATA_CALL_RESPONSE);
                     SetupResult result = onSetupConnectionCompleted(msg.arg1, dataCallResponse, cp);
+                    if (result != null) {
+                        log("EVENT_SETUP_DATA_CONNECTION_DONE, result: " + result
+                                + ", mFailCause: " + result.mFailCause);
+                    }
                     if (result != SetupResult.ERROR_STALE) {
                         if (mConnectionParams != cp) {
                             loge("DcActivatingState: WEIRD mConnectionsParams:"+ mConnectionParams
@@ -2189,13 +2213,8 @@ public class DataConnection extends StateMachine {
                 DcTracker dcTracker = mPhone.getDcTracker(getHandoverSourceTransport());
                 DataConnection dc = dcTracker.getDataConnectionByApnType(
                         mConnectionParams.mApnContext.getApnType());
-                // It's possible that the source data connection has been disconnected by the modem
-                // already. If not, set its handover state to completed.
-                if (dc != null) {
-                    // Transfer network agent from the original data connection as soon as the
-                    // new handover data connection is connected.
-                    dc.setHandoverState(HANDOVER_STATE_COMPLETED);
-                }
+                // Don't move the handover state of the source transport to COMPLETED immediately
+                // because of ensuring to send deactivating data call for source transport.
 
                 if (mHandoverSourceNetworkAgent != null) {
                     String logStr = "Transfer network agent " + mHandoverSourceNetworkAgent.getTag()
@@ -3193,4 +3212,3 @@ public class DataConnection extends StateMachine {
         pw.flush();
     }
 }
-

@@ -89,7 +89,6 @@ public class AdnRecord implements Parcelable {
             String number;
             String[] emails;
             String[] additionalNumbers;
-
             efid = source.readInt();
             recordNumber = source.readInt();
             alphaTag = source.readString();
@@ -293,6 +292,7 @@ public class AdnRecord implements Parcelable {
                 arrayCompareNullEqualsEmpty(mEmails, adn.mEmails)
                 && arrayCompareNullEqualsEmpty(mAdditionalNumbers, adn.mAdditionalNumbers));
     }
+
     //***** Parcelable Implementation
 
     @Override

@@ -872,11 +872,11 @@ public class MultiSimSettingController extends Handler {
         }
     }
 
-    private void log(String msg) {
+    protected void log(String msg) {
         Log.d(LOG_TAG, msg);
     }
 
-    private void loge(String msg) {
+    protected void loge(String msg) {
         Log.e(LOG_TAG, msg);
     }
 }

@@ -428,7 +428,8 @@ public class VendorPhoneSwitcher extends PhoneSwitcher {
         boolean isUiccApplicationEnabled = true;
         // FIXME get the SubscriptionManager.UICC_APPLICATIONS_ENABLED value and use it here
         log("isUiccProvisioned: status= " + isUiccApplicationEnabled + " phoneid=" + phoneId);
-        return mSubscriptionController.isActiveSubId(mPhoneSubscriptions[phoneId]) && isUiccApplicationEnabled; 
+        return mSubscriptionController.isActiveSubId(mPhoneSubscriptions[phoneId]) &&
+                isUiccApplicationEnabled;
     }
 
     @Override

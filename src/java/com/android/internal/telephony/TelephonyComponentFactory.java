@@ -41,6 +41,7 @@ import com.android.internal.telephony.imsphone.ImsPhone;
 import com.android.internal.telephony.imsphone.ImsPhoneCallTracker;
 import com.android.internal.telephony.SubscriptionController;
 import com.android.internal.telephony.nitz.NitzStateMachineImpl;
+import com.android.internal.telephony.SubscriptionController;
 import com.android.internal.telephony.uicc.IccCardStatus;
 import com.android.internal.telephony.uicc.UiccCard;
 import com.android.internal.telephony.uicc.UiccProfile;
@@ -245,7 +246,7 @@ public class TelephonyComponentFactory {
      */
     public void injectTheComponentFactory(XmlResourceParser parser) {
         if (mInjectedComponents != null) {
-            Rlog.d(TAG, "Already injected.");
+            Rlog.i(TAG, "Already injected.");
             return;
         }
 
@@ -434,16 +435,19 @@ public class TelephonyComponentFactory {
             int phoneId, int precisePhoneType,
             TelephonyComponentFactory telephonyComponentFactory) {
         Rlog.d(LOG_TAG, "makePhone");
+        Rlog.i(TAG, "makePhone");
         return new GsmCdmaPhone(context, ci, notifier, phoneId, precisePhoneType,
                 telephonyComponentFactory);
     }
 
     public SubscriptionController initSubscriptionController(Context c) {
+        Rlog.i(TAG, "initSubscriptionController");
         return SubscriptionController.init(c);
     }
 
     public PhoneSwitcher makePhoneSwitcher(int maxDataAttachModemCount, Context context,
             Looper looper) {
+        Rlog.i(TAG, "makePhoneSwitcher");
         return PhoneSwitcher.make(maxDataAttachModemCount, context, looper);
     }
 

@@ -210,7 +210,6 @@ public class IccProvider extends ContentProvider {
 
         String tag = initialValues.getAsString("tag");
         String number = initialValues.getAsString("number");
-
         String emails = initialValues.getAsString("emails");
         String anrs = initialValues.getAsString("anrs");
 
@@ -562,7 +561,6 @@ public class IccProvider extends ContentProvider {
             String alphaTag = record.getAlphaTag();
             String number = record.getNumber();
             String[] anrs = record.getAdditionalNumbers();
-
             if (DBG) log("loadRecord: " + alphaTag + ", " + Rlog.pii(TAG, number));
             contact[0] = alphaTag;
             contact[1] = number;
