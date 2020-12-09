@@ -23,6 +23,7 @@ import android.telephony.data.ApnSetting;
 import android.telephony.Rlog;
 import android.telephony.ServiceState;
 import android.telephony.SubscriptionManager;
+import android.telephony.data.ApnSetting;
 import android.text.TextUtils;
 import android.view.WindowManager;
 
